@@ -1,0 +1,73 @@
+run_as_batch="yes"
+
+scaling() {
+  which=$1
+  param=$2
+
+cat <<END > scalings.sh
+#!/bin/sh
+#SBATCH --job-name='scaling'
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=232GB
+#SBATCH --output=scaling-%j.log
+#SBATCH --time=96:00:00
+
+echo "Running $which $param"
+date
+$HOME/scalings/anaconda3_herasim/bin/python scalings.py $which $param
+date
+
+END
+
+  if [ "$run_as_batch" = "yes" ]
+  then 
+    sbatch scalings.sh
+  else
+    nice sh scalings.sh
+    sleep 2
+  fi
+
+}
+
+scaling_gpu() {
+  which=$1
+  param=$2
+
+cat <<END > scalings.sh
+#!/bin/sh
+#SBATCH --job-name='scaling_gpu'
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=232GB
+#SBATCH --output=scaling-%j.log
+#SBATCH --time=02:00:00
+#SBATCH --partition=GPU
+
+
+echo "Running $which $param"
+date
+$HOME/scalings/anaconda3_herasim/bin/python scalings.py $which $param
+date
+
+END
+
+  if [ "$run_as_batch" = "yes" ]
+  then
+    sbatch scalings.sh
+  else
+    echo "Can't run GPU from command line"
+    exit
+  fi
+
+}
+
+
+for p in antennas channels times sources
+do
+  #scaling hera_sim_cpu $p
+  #scaling hera_sim_cpu_az $p          # Not installed
+  scaling_gpu hera_sim_gpu $p
+  #scaling healvis $p
+  #scaling pyuvsim $p
+done
