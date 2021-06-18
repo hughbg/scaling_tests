@@ -23,6 +23,7 @@ def create_parser():
     return parser
 
 args = create_parser().parse_args()
+args.nsource = 0
 
 obs, gsm = telescope_config("healvis", nant=args.nant, nfreq=args.nchan, ntime=args.ntime, nsource=args.nsource)
 

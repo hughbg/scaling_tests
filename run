@@ -1,17 +1,34 @@
 run_as_batch="yes"
 
-scaling() {
-  which=$1
-  param=$2
-
-cat <<END > scalings.sh
-#!/bin/sh
+# Set appropriate header if the batch system is PBS or SLURM
+if [ -x /opt/slurm/bin/sbatch ]		# ILIFU
+then
+  batch_header="#!/bin/bash
 #SBATCH --job-name='scaling'
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=232GB
 #SBATCH --output=scaling-%j.log
 #SBATCH --time=96:00:00
+"
+else
+  batch_header="#!/bin/bash
+#\$ -cwd
+#\$ -o scalings
+#\$ -j y
+#\$ -pe smp 1
+#\$ -l h_rt=24:00:00
+#\$ -l h_vmem=224G
+"
+
+fi
+
+scaling() {
+  which=$1
+  param=$2
+
+cat <<END > scalings.sh
+$batch_header
 
 echo "Running $which $param"
 date

@@ -5,36 +5,7 @@ import subprocess
 import numpy as np
 import copy
 import os, sys
-
-REPEAT = 4
-
-# The script used to do the simulation is specified with "script" in each
-# config. The script must print a line of the form "SIM <simulation time (s)> <memory used (GB)>". 
-# The script must take options --nant, --ntime, --nchan, --nsource
-hera_sim_config = {
-    "title": "hera_sim",
-    "modifier": None,
-    "pinterp": "/users/hgarsden/scalings/anaconda3_herasim/bin/python",
-    "script": "hera_sim_sim.py",
-    "defaults": { "antennas": 10, "channels" : 10, "times" : 10, "sources": 10 },
-    "antenna_numbers": [ 10, 25, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 ],   
-    "channel_numbers": [ 10, 100, 200, 300, 400, 500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000 ],
-    "time_numbers": [ 10, 100, 200, 300, 400, 500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000 ],
-    "source_numbers": [ 10, 500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000 ],
-    }
-
-
-pyuvsim_config = copy.deepcopy(hera_sim_config)
-pyuvsim_config["title"] = "pyuvsim"
-pyuvsim_config["script"] = "pyuvsim_sim.py"
-
-healvis_config = copy.deepcopy(hera_sim_config)
-healvis_config["title"] = "healvis"
-healvis_config["script"] = "healvis_sim.py"
-healvis_config["defaults"] = { "antennas": 10, "channels" : 10, "times" : 10, "sources": 0 }
-healvis_config["source_numbers"] = [ 0 ]
-
-
+import yaml
 
 # Shorten the number of parameters for testing
 def short(config):
@@ -42,16 +13,16 @@ def short(config):
         config[param[:-1]+"_numbers"] = config[param[:-1]+"_numbers"][:2] 
     return config
 
-def get_time(pinterp, script, nant, nchan, ntime, nsource, modifier):
+def get_time(pinterp, script, nant, nchan, ntime, nsource, option):
     command = [pinterp, script, '--nant', str(nant), '--nchan', str(nchan), '--ntime', str(ntime), '--nsource', str(nsource) ]
 
-    if modifier is not None:
-        command += [ modifier ]
+    if option is not None:
+        command += [ "--"+option ]
     
     print(" ".join(command))
     sys.stdout.flush()
     script_time = sim_time = mem_used = 0.0
-    for i in range(REPEAT):
+    for i in range(config["repetitions"]):
         start = time.time()
         p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr  = p.communicate()
@@ -71,7 +42,7 @@ def get_time(pinterp, script, nant, nchan, ntime, nsource, modifier):
            script_time = sim_time = mem_used = np.nan
         time.sleep(1)
 
-    return script_time/REPEAT, sim_time/REPEAT, mem_used/REPEAT
+    return script_time/config["repetitions"], sim_time/config["repetitions"], mem_used/config["repetitions"]
 
 def baseline(nant):
     num = 0
@@ -106,7 +77,7 @@ def run(config, which_param):
     print("Pre-run")		# Get the script loaded into cache by running a few times
     get_time(config["pinterp"], config["script"], config["defaults"]["antennas"],
 	config["defaults"]["channels"], config["defaults"]["times"], config["defaults"]["sources"],
-        config["modifier"])
+        config["option"])
     print("End pre-run")
 
     for param in [ which_param ]:
@@ -121,7 +92,7 @@ def run(config, which_param):
                                               num if param=="channels" else config["defaults"][param],
                                               num if param=="times" else config["defaults"][param],
                                               num if param=="sources" else config["defaults"][param],
-                                              config["modifier"])
+                                              config["option"])
 
             xaxis_values = config[param[:-1]+"_numbers"]
             xlabel = param.capitalize()
@@ -140,22 +111,27 @@ def run(config, which_param):
 
 
 
-import sys
-if sys.argv[1] == "hera_sim_cpu": 
-    c = hera_sim_config
-    c["title"] = "hera_sim CPU"
-elif sys.argv[1] == "hera_sim_gpu": 
-    c = hera_sim_config
-    c["title"] = "hera_sim GPU"
-    c["modifier"] = "--use_gpu"
-elif sys.argv[1] == "hera_sim_cpu_az": 
-    c = hera_sim_config
-    c["title"] = "hera_sim CPU AZ"
-    c["modifier"] = "--use_az"
-elif sys.argv[1] == "pyuvsim": c = pyuvsim_config
-elif sys.argv[1] == "healvis": c = healvis_config
-else:
-    raise ValueError("Invalid config "+sys.argv[1])
 
-#c = short(c)
-run(c, sys.argv[2])
+# The script used to do the simulation is specified with "script" in each
+# config. The script must print a line of the form "SIM <simulation time (s)> <memory used (GB)>". 
+# The script must take options --nant, --ntime, --nchan, --nsource
+
+with open("config.yaml") as yfile:
+    config = yaml.load(yfile, Loader=yaml.FullLoader)
+
+# Promote some config values to the top level to indicate
+# what we are running based on sys.argv[1]
+config["title"] = config[sys.argv[1]]["title"]
+config["script"] = config[sys.argv[1]]["script"]
+if "option" in config[sys.argv[1]].keys():
+    config["option"] = config[sys.argv[1]]["option"]
+else:
+    config["option"] = None
+
+if sys.argv[1] == "healvis":
+    config["defaults"] = { "antennas": 10, "channels" : 10, "times" : 10, "sources": 0 }
+    config["source_numbers"] = [ 0 ]
+
+if config["short_run"]: config = short(config)
+
+run(config, sys.argv[2])

@@ -1,0 +1,95 @@
+pinterp: /data/home/apw737/anaconda3_herasim/bin/python
+
+defaults:
+  antennas: 10
+  channels: 10
+  sources: 10
+  times: 10
+
+antenna_numbers:
+- 10
+- 25
+- 50
+- 100
+- 200
+- 300
+- 400
+- 500
+- 600
+- 700
+- 800
+- 900
+- 1000
+
+channel_numbers:
+- 10
+- 100
+- 200
+- 300
+- 400
+- 500
+- 1000
+- 2000
+- 3000
+- 4000
+- 5000
+- 6000
+- 7000
+- 8000
+- 9000
+- 10000
+
+source_numbers:
+- 10
+- 500
+- 1000
+- 2000
+- 3000
+- 4000
+- 5000
+- 6000
+- 7000
+- 8000
+- 9000
+- 10000
+
+time_numbers:
+- 10
+- 100
+- 200
+- 300
+- 400
+- 500
+- 1000
+- 2000
+- 3000
+- 4000
+- 5000
+- 6000
+- 7000
+- 8000
+- 9000
+- 10000
+
+hera_sim_cpu:
+        script: hera_sim_sim.py        
+        title: hera_sim CPU
+
+hera_sim_gpu:
+        script: hera_sim_sim.py
+        option: use_gpu
+        title: hera_sim GPU
+
+pyuvsim:
+        script: pyuvsim_sim.py
+        title: pyuvsim
+
+healvis:
+        script: healvis_sim.py
+        title: healvis
+
+short_run: True
+repetitions: 4
+run_as_batch: False
+run_time: "24:00:00"
+gpu_run_time: "2:00:00"
