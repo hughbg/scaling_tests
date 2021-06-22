@@ -75,6 +75,11 @@ hera_sim_cpu:
         script: hera_sim_sim.py        
         title: hera_sim CPU
 
+hera_sim_cpu_az:
+        script: hera_sim_sim.py
+        option: use_astropy
+        title: hera_sim CPU astropy az/za
+
 hera_sim_gpu:
         script: hera_sim_sim.py
         option: use_gpu

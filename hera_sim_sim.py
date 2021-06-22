@@ -19,8 +19,10 @@ def create_parser():
                                     help="Number of sources")
     parser.add_argument("--use_gpu", default=False, dest="use_gpu", action="store_true",
                                     help="Use the gpu simulator")
-    parser.add_argument("--use_az", default=False, dest="use_az", action="store_true",
+    parser.add_argument("--use_astropy", default=False, dest="use_astropy", action="store_true",
                                     help="Use az corrections")
+    parser.add_argument("--use_az_fix", default=False, dest="use_az_fix", action="store_true",
+                                    help="Use az fix corrections")
 
 
     return parser
@@ -32,19 +34,20 @@ args = create_parser().parse_args()
 uvdata, beam, beam_dict, freqs, ra_dec, flux = \
     telescope_config("hera_sim", nant=args.nant, nfreq=args.nchan, ntime=args.ntime, nsource=args.nsource)
 
-if args.use_az:
-    simulator = VisCPU(
+if args.use_az_fix or args.use_astropy:
+    if args.use_gpu:
+        raise RuntimError("Can't use GPU with az corrections")
+    
+    from vis_cpu.vis_cpu import VisCPU as VisCPU_hugh
+    simulator = VisCPU_hugh(
         uvdata = uvdata,
         beams = beam,
-        beam_ids = list(beam_dict.values()),
         sky_freqs = freqs,
         point_source_pos = ra_dec,
         point_source_flux = flux,
-        split_I = True,
-        use_pixel_beams=False,
-        az_za_corrections=[ "level_2", "precompute", "uvbeam_az" ],
-        precision = 2
+        which = "astropy" if args.use_astropy else "az_fix"
     )
+
 else:
     simulator = VisCPU(
         uvdata = uvdata,
@@ -55,9 +58,9 @@ else:
         point_source_flux = flux,
         bm_pix = BEAM_PIX,
         use_gpu = args.use_gpu,
-        precision = 2
     )
 
+simulator.simulate()
 sim_time = timeit(stmt = "simulator.simulate()", globals=globals(), number = 1)
 
 usage = getrusage(RUSAGE_SELF)

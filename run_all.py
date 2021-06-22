@@ -25,11 +25,11 @@ def gen_batch_header(use_gpu=False):
     else:
         batch_header="""#!/bin/bash
 #$ -cwd
-#$ -o scalings
 #$ -j y
 #$ -pe smp 1
 #$ -l h_rt="""+time+"""
-#$ -l h_vmem=232G"""
+#$ -l h_vmem=232G
+#$ -l highmem"""
     
     if use_gpu:
         if ON_ILIFU:
@@ -58,9 +58,8 @@ def run_scaling(which, param, use_gpu=False):
 
 for p in [ "antennas", "channels", "times", "sources" ]:
     #run_scaling("hera_sim_cpu", p)
-    #run_scaling("hera_sim_cpu_az", p)          # Not installed
-    run_scaling("hera_sim_gpu", p, True)
-    exit()
+    run_scaling("hera_sim_cpu_az", p)          
+    #run_scaling("hera_sim_gpu", p, True)
     #run_scaling("healvis", p)
     #run_scaling("pyuvsim", p)
 

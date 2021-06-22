@@ -10,7 +10,7 @@ import healvis as hv
 
 originals = True   # Run the vanilla codes
 
-def telescope_config(which_package, nant=2, nfreq=2, ntime=1, nsource=1):
+def telescope_config(which_package, nant=2, nfreq=2, ntime=1, nsource=1, simple_beam=False):
     """
     Setup the configuration parameters for pyuvsim/hera_sim/healvis.
     Different packages require different objects for simulation.
@@ -27,6 +27,7 @@ def telescope_config(which_package, nant=2, nfreq=2, ntime=1, nsource=1):
     ants = {}
     for i in range(nant):
         ants[i] = ( x[i], y[i], z[i] )
+    print("ANT", ants)
         
     # Observing parameters in a UVData object.
     uvdata = io.empty_uvdata(
@@ -61,8 +62,11 @@ def telescope_config(which_package, nant=2, nfreq=2, ntime=1, nsource=1):
         flux = (freqs[:,np.newaxis]/freqs[0])**sources[:,3].T*sources[:,2].T      
         beam_ids = list(ants.keys())
 
-    # Beam model. PerturbedPolyBeam, which is not symmetrical.
-    cfg_beam = dict(ref_freq=1.e8,
+    if simple_beam:
+        beam = [AnalyticBeam("gaussian", sigma=0.103) for i in range(len(ants.keys()))]
+    else:
+        # Beam model. PerturbedPolyBeam, which is not symmetrical.
+        cfg_beam = dict(ref_freq=1.e8,
             spectral_index =        -0.6975,
             mainlobe_width =        0.3 ,
             beam_coeffs=[ 0.29778665, -0.44821433, 0.27338272, 
@@ -73,7 +77,7 @@ def telescope_config(which_package, nant=2, nfreq=2, ntime=1, nsource=1):
                                    0.00151808, -0.00593812, 0.00351559
                                  ] )
 
-    beam = [PerturbedPolyBeam(np.array([-0.20437532, -0.4864951,  -0.18577532, -0.38053642,  0.08897764,  0.06367166,
+        beam = [PerturbedPolyBeam(np.array([-0.20437532, -0.4864951,  -0.18577532, -0.38053642,  0.08897764,  0.06367166,
                               0.29634711,  1.40277112]),
                               mainlobe_scale=1.0, xstretch=0.9, ystretch=0.8, **cfg_beam) 
                 for i in range(len(ants.keys()))]
