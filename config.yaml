@@ -78,7 +78,7 @@ hera_sim_cpu:
 hera_sim_cpu_astropy:
         script: hera_sim_sim.py
         option: use_astropy
-        title: hera_sim CPU astropy az/za
+        title: hera_sim CPU astropy
 
 hera_sim_cpu_az_fix:
         script: hera_sim_sim.py
@@ -102,8 +102,9 @@ short_run:
         enable: True
         run_time: "1:00:00"
         gpu_run_time: "1:00:00"
-        mem: "1G"
-mem: "232G"
+        mem: 1          # GB
+
+mem: 232                # GB
 repetitions: 4
 run_as_batch: True
 run_time: "24:00:00"

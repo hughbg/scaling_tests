@@ -8,7 +8,6 @@ with open("config.yaml") as yfile:
 
 ON_ILIFU = os.path.isfile("/opt/slurm/bin/sbatch")
 
-
 def gen_batch_header(use_gpu=False):
     
     if config["short_run"]["enable"]:
@@ -18,12 +17,17 @@ def gen_batch_header(use_gpu=False):
         time = config["gpu_run_time"] if use_gpu else config["run_time"]
         mem = config["mem"]
 
+    cpu = 1
+    if use_gpu and not ON_ILIFU:
+       mem /= 8
+       cpu = 8
+
     if ON_ILIFU:
         batch_header="""#!/bin/bash
 #SBATCH --job-name='scaling'
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
-#SBATCH --mem="""+mem+"""
+#SBATCH --mem="""+str(mem)+"""G"""+"""
 #SBATCH --output=scaling-%j.log
 #SBATCH --time="""+time
 
@@ -31,9 +35,9 @@ def gen_batch_header(use_gpu=False):
         batch_header="""#!/bin/bash
 #$ -cwd
 #$ -j y
-#$ -pe smp 1
+#$ -pe smp """+str(cpu)+"""
 #$ -l h_rt="""+time+"""
-#$ -l h_vmem="""+mem+"""\n"""
+#$ -l h_vmem="""+str(mem)+"""G"""
 
         if not config["short_run"]["enable"]:
             batch_header += """#$ -l highmem\n"""
@@ -64,11 +68,10 @@ def run_scaling(which, param, use_gpu=False):
         os.system("nice sh scalings.sh")
 
 for p in [ "antennas", "channels", "times", "sources" ]:
-    run_scaling("hera_sim_cpu", p)
-    exit()
-    run_scaling("hera_sim_cpu_az_fix", p)          
-    run_scaling("hera_sim_cpu_astropy", p)
-    #run_scaling("hera_sim_gpu", p, True)
+    #run_scaling("hera_sim_cpu", p)
+    #run_scaling("hera_sim_cpu_az_fix", p)          
+    #run_scaling("hera_sim_cpu_astropy", p)
+    run_scaling("hera_sim_gpu", p, True)
     #run_scaling("healvis", p)
-    run_scaling("pyuvsim", p)
+    #run_scaling("pyuvsim", p)
 
