@@ -6,7 +6,7 @@ import numpy as np
 from pyuvsim.telescope import BeamList
 from pyuvsim import AnalyticBeam
 from pyradiosky import SkyModel
-import healvis as hv
+#import healvis as hv
 
 originals = True   # Run the vanilla codes
 
@@ -27,7 +27,6 @@ def telescope_config(which_package, nant=2, nfreq=2, ntime=1, nsource=1, simple_
     ants = {}
     for i in range(nant):
         ants[i] = ( x[i], y[i], z[i] )
-    print("ANT", ants)
         
     # Observing parameters in a UVData object.
     uvdata = io.empty_uvdata(

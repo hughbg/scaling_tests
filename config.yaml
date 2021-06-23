@@ -75,10 +75,15 @@ hera_sim_cpu:
         script: hera_sim_sim.py        
         title: hera_sim CPU
 
-hera_sim_cpu_az:
+hera_sim_cpu_astropy:
         script: hera_sim_sim.py
         option: use_astropy
         title: hera_sim CPU astropy az/za
+
+hera_sim_cpu_az_fix:
+        script: hera_sim_sim.py
+        option: use_az_fix
+        title: hera_sim CPU az fix
 
 hera_sim_gpu:
         script: hera_sim_sim.py
@@ -93,8 +98,13 @@ healvis:
         script: healvis_sim.py
         title: healvis
 
-short_run: True
+short_run: 
+        enable: True
+        run_time: "1:00:00"
+        gpu_run_time: "1:00:00"
+        mem: "1G"
+mem: "232G"
 repetitions: 4
-run_as_batch: False
+run_as_batch: True
 run_time: "24:00:00"
 gpu_run_time: "2:00:00"
