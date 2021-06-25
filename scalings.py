@@ -132,6 +132,8 @@ if sys.argv[1] == "healvis":
     config["defaults"] = { "antennas": 10, "channels" : 10, "times" : 10, "sources": 0 }
     config["source_numbers"] = [ 0 ]
 
-if config["short_run"]: config = short(config)
+if config["short_run"]["enable"]: 
+    print("Short run")
+    config = short(config)
 
 run(config, sys.argv[2])

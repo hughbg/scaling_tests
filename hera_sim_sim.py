@@ -23,6 +23,8 @@ def create_parser():
                                     help="Use az corrections")
     parser.add_argument("--use_az_fix", default=False, dest="use_az_fix", action="store_true",
                                     help="Use az fix corrections")
+    parser.add_argument("--use_beam_pix", default=False, dest="use_beam_pix", action="store_true",
+                                    help="Use pixel beams")
 
 
     return parser
@@ -58,6 +60,7 @@ else:
         point_source_flux = flux,
         bm_pix = BEAM_PIX,
         use_gpu = args.use_gpu,
+        use_pixel_beams = args.use_beam_pix
     )
 
 simulator.simulate()

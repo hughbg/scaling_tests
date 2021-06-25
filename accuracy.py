@@ -6,7 +6,7 @@ from config import telescope_config
 from pyuvsim import uvsim, simsetup
 from pyuvsim.telescope import BeamList
 from hera_sim.visibilities import VisCPU
-#from vis_cpu.vis_cpu import VisCPU as VisCPU_hugh
+from vis_cpu.vis_cpu import VisCPU as VisCPU_hugh
 
 
 # pyuvsim
@@ -22,7 +22,7 @@ print("auto amp:", np.abs(sim_auto))
 print("cross amp:", np.abs(sim_cross), "phase:", np.angle(sim_cross))
 
 print("V",uvd_out.data_array)
-exit()
+
 # various versions of hera_sim
 
 uvdata, beam, beam_dict, freqs, ra_dec, flux = telescope_config("hera_sim", 2, 1, 1, 1, True)

@@ -1,4 +1,4 @@
-pinterp: /data/home/apw737/anaconda3_herasim/bin/python
+pinterp: /users/hgarsden/anaconda3_herasim/bin/python
 
 defaults:
   antennas: 10
@@ -85,6 +85,11 @@ hera_sim_cpu_az_fix:
         option: use_az_fix
         title: hera_sim CPU az fix
 
+hera_sim_cpu_beam_pix:
+        script: hera_sim_sim.py
+        option: use_beam_pix
+        title: hera_sim CPU beam pix
+
 hera_sim_gpu:
         script: hera_sim_sim.py
         option: use_gpu
@@ -99,7 +104,7 @@ healvis:
         title: healvis
 
 short_run: 
-        enable: True
+        enable: False
         run_time: "1:00:00"
         gpu_run_time: "1:00:00"
         mem: 1          # GB
