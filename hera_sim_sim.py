@@ -60,7 +60,7 @@ else:
         point_source_flux = flux,
         bm_pix = BEAM_PIX,
         use_gpu = args.use_gpu,
-        use_pixel_beams = args.use_beam_pix
+        use_pixel_beams = True if args.use_gpu else args.use_beam_pix
     )
 
 simulator.simulate()
@@ -68,3 +68,4 @@ sim_time = timeit(stmt = "simulator.simulate()", globals=globals(), number = 1)
 
 usage = getrusage(RUSAGE_SELF)
 print("SIM", sim_time, usage.ru_maxrss/1000.0/1000)      # Usage in GB
+
