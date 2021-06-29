@@ -58,7 +58,7 @@ def run_scaling(which, param, use_gpu=False):
     f.write(config["pinterp"]+" scalings.py "+str(which)+" "+str(param)+"\n")
     f.write("date"+"\n")
     f.close()
-    
+
     if config["run_as_batch"]:
         if ON_ILIFU:
             os.system("sbatch scalings.sh")
@@ -72,7 +72,7 @@ for p in [ "antennas", "channels", "times", "sources" ]:
     run_scaling("hera_sim_cpu_az_fix", p)          
     run_scaling("hera_sim_cpu_astropy", p)
     run_scaling("hera_sim_cpu_beam_pix", p)
-    #run_scaling("hera_sim_gpu", p, True)
+    run_scaling("hera_sim_gpu", p, True)
     #run_scaling("healvis", p)
     run_scaling("pyuvsim", p)
 

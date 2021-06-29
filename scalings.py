@@ -10,7 +10,8 @@ import yaml
 # Shorten the number of parameters for testing
 def short(config):
     for param in [ "antennas", "channels", "times", "sources" ]:
-        config[param[:-1]+"_numbers"] = config[param[:-1]+"_numbers"][:2] 
+        config[param]["stop"] = config["defaults"][param]+config[param]["step"]
+    config["repetitions"] = 1
     return config
 
 def get_time(pinterp, script, nant, nchan, ntime, nsource, option):
@@ -50,6 +51,9 @@ def baseline(nant):
         for j in range(i+1, nant): num += 1
     return num
 
+def numbers(param):
+    return list(range(config["defaults"][param], config[param]["stop"], config[param]["step"]))
+
 def plot(title, xlab, ylab, ylab_units, x, y, constants):
     plt.clf()
     long_title = title+". "+ylab+" vs. Num "+xlab+"\nConstants:"
@@ -81,11 +85,13 @@ def run(config, which_param):
     print("End pre-run")
 
     for param in [ which_param ]:
-        script_time = np.zeros(len(config[param[:-1]+"_numbers"]))
-        sim_time = np.zeros(len(config[param[:-1]+"_numbers"]))
-        mem_used = np.zeros(len(config[param[:-1]+"_numbers"]))
+        param_values = numbers(param)
+        
+        script_time = np.zeros(len(param_values))
+        sim_time = np.zeros_like(script_time)
+        mem_used = np.zeros_like(script_time)
 
-        for i, num in enumerate(config[param[:-1]+"_numbers"]):
+        for i, num in enumerate(param_values):
             script_time[i], sim_time[i], mem_used[i] = get_time(config["pinterp"], 
                                               config["script"], 
                                               num if param=="antennas" else config["defaults"][param], 
@@ -94,10 +100,10 @@ def run(config, which_param):
                                               num if param=="sources" else config["defaults"][param],
                                               config["option"])
 
-            xaxis_values = config[param[:-1]+"_numbers"]
+            xaxis_values = param_values
             xlabel = param.capitalize()
             if param == "antennas": 
-                xaxis_values = [ baseline(n) for n in config["antenna_numbers"] ]
+                xaxis_values = [ baseline(n) for n in param_values ]
                 xlabel = "Baselines"
  
             constants = {}
