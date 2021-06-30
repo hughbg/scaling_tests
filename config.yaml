@@ -25,7 +25,7 @@ times:
 
 hera_sim_cpu_az:
         script: hera_sim_sim.py        
-        title: hera_sim CPU
+        title: hera_sim CPU az
 
 hera_sim_cpu_astropy:
         script: hera_sim_sim.py
@@ -35,7 +35,7 @@ hera_sim_cpu_astropy:
 hera_sim_cpu_az_update:
         script: hera_sim_sim.py
         option: use_az_fix
-        title: hera_sim CPU az fix
+        title: hera_sim CPU az update
 
 hera_sim_cpu_beam_pix:
         script: hera_sim_sim.py
@@ -64,4 +64,5 @@ short_run:
 mem: 232                # GB
 repetitions: 4
 run_time: "24:00:00"
-gpu_run_time: "2:00:00"
+gpu_run_time: "5:00:00"
+show_output: False

@@ -61,18 +61,20 @@ def run_scaling(which, param, use_gpu=False):
 
     if config["run_as_batch"]:
         if ON_ILIFU:
-            os.system("sbatch scalings.sh")
+            os.system("sbatch scalings.sh | tee -a jobs.txt")
         else:
-            os.system("qsub scalings.sh")
+            os.system("qsub scalings.sh  | tee -a jobs.txt")
     else:
         os.system("nice sh scalings.sh")
 
+if os.path.exists("jobs.txt"):
+    os.remove("jobs.txt")
 for p in [ "antennas", "channels", "times", "sources" ]:
-    #run_scaling("hera_sim_cpu_az", p)
-    #run_scaling("hera_sim_cpu_az_update", p)          
-    #run_scaling("hera_sim_cpu_astropy", p)
-    #run_scaling("hera_sim_cpu_beam_pix", p)
-    run_scaling("hera_sim_gpu", p, True)
+    run_scaling("hera_sim_cpu_az", p)
+    run_scaling("hera_sim_cpu_az_update", p)          
+    run_scaling("hera_sim_cpu_astropy", p)
+    run_scaling("hera_sim_cpu_beam_pix", p)
+    #run_scaling("hera_sim_gpu", p, True)
     #run_scaling("healvis", p)
     #run_scaling("pyuvsim", p)
 

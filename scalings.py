@@ -14,7 +14,7 @@ def short(config):
     config["repetitions"] = 1
     return config
 
-def get_time(pinterp, script, nant, nchan, ntime, nsource, option):
+def get_time(pinterp, script, nant, nchan, ntime, nsource, option, show_output):
     command = [pinterp, script, '--nant', str(nant), '--nchan', str(nchan), '--ntime', str(ntime), '--nsource', str(nsource) ]
 
     if option is not None:
@@ -26,9 +26,13 @@ def get_time(pinterp, script, nant, nchan, ntime, nsource, option):
     for i in range(config["repetitions"]):
         start = time.time()
         p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        end = time.time()
         stdout, stderr  = p.communicate()
         stdout = str(stdout, "utf-8")
-        end = time.time()
+        stderr = str(stderr, "utf-8")
+        if show_output:
+            print("STDOUT --------------------\n", stdout)
+            print("STDERR --------------------\n", stderr)
         if p.returncode == 0:
             for line in str(stdout).split("\n"):
                 if line[:3] == "SIM": 
@@ -68,6 +72,7 @@ def plot(title, xlab, ylab, ylab_units, x, y, constants):
     except:
         pass
     fname = title.replace(" ", "_")+"_"+xlab.replace(" ", "_")+"_"+ylab.replace(" ", "_")
+    print("Output to", fname)
     plt.savefig(fname+".png")
     np.savetxt(fname+".dat", np.column_stack((x, y)))
  
@@ -81,7 +86,7 @@ def run(config, which_param):
     print("Pre-run")		# Get the script loaded into cache by running a few times
     get_time(config["pinterp"], config["script"], config["defaults"]["antennas"],
 	config["defaults"]["channels"], config["defaults"]["times"], config["defaults"]["sources"],
-        config["option"])
+        config["option"], config["show_output"])
     print("End pre-run")
 
     for param in [ which_param ]:
@@ -98,7 +103,7 @@ def run(config, which_param):
                                               num if param=="channels" else config["defaults"][param],
                                               num if param=="times" else config["defaults"][param],
                                               num if param=="sources" else config["defaults"][param],
-                                              config["option"])
+                                              config["option"], config["show_output"])
 
             xaxis_values = param_values
             xlabel = param.capitalize()
