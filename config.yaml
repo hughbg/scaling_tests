@@ -1,4 +1,5 @@
 pinterp: /users/hgarsden/anaconda3_herasim/bin/python
+run_as_batch: True
 
 defaults:
   antennas: 10
@@ -11,18 +12,18 @@ antennas:
     step: 10
 
 channels:
-    max: 1000
+    max: 2000
     step: 50
     
 sources:
     max: 10000
-    step: 400
+    step: 200
 
 times:
-    max: 1000
+    max: 2000
     step: 50
 
-hera_sim_cpu:
+hera_sim_cpu_az:
         script: hera_sim_sim.py        
         title: hera_sim CPU
 
@@ -31,7 +32,7 @@ hera_sim_cpu_astropy:
         option: use_astropy
         title: hera_sim CPU astropy
 
-hera_sim_cpu_az_fix:
+hera_sim_cpu_az_update:
         script: hera_sim_sim.py
         option: use_az_fix
         title: hera_sim CPU az fix
@@ -55,13 +56,12 @@ healvis:
         title: healvis
 
 short_run: 
-        enable: False
+        enable: False 
         run_time: "1:00:00"
         gpu_run_time: "1:00:00"
         mem: 1          # GB
 
 mem: 232                # GB
 repetitions: 4
-run_as_batch: True
 run_time: "24:00:00"
 gpu_run_time: "2:00:00"

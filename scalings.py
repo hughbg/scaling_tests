@@ -10,7 +10,7 @@ import yaml
 # Shorten the number of parameters for testing
 def short(config):
     for param in [ "antennas", "channels", "times", "sources" ]:
-        config[param]["stop"] = config["defaults"][param]+config[param]["step"]
+        config[param]["max"] = config["defaults"][param]+config[param]["step"]
     config["repetitions"] = 1
     return config
 
@@ -52,7 +52,7 @@ def baseline(nant):
     return num
 
 def numbers(param):
-    return list(range(config["defaults"][param], config[param]["stop"], config[param]["step"]))
+    return list(range(config["defaults"][param], config[param]["max"], config[param]["step"]))
 
 def plot(title, xlab, ylab, ylab_units, x, y, constants):
     plt.clf()
