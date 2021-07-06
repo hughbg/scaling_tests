@@ -36,7 +36,7 @@ args = create_parser().parse_args()
 uvdata, beam, beam_dict, freqs, ra_dec, flux = \
     telescope_config("hera_sim", nant=args.nant, nfreq=args.nchan, ntime=args.ntime, nsource=args.nsource)
 
-if args.use_az_fix or args.use_astropy:
+if args.use_astropy:
     if args.use_gpu:
         raise RuntimError("Can't use GPU with az corrections")
     
@@ -51,6 +51,17 @@ if args.use_az_fix or args.use_astropy:
     )
 
 else:
+    if args.use_az_fix:
+        from vis_cpu.conversions import equatorial_to_eci_coords
+        from astropy.coordinates import EarthLocation
+        from astropy.time import Time
+        location = EarthLocation.from_geodetic(lat=-30.7215, lon=21.4283,  height=1073.)
+        obstime = Time(uvdata.time_array[0], format='jd', scale='utc')
+
+        ra, dec = equatorial_to_eci_coords(ra_dec[:, 0], ra_dec[:, 1], obstime, location)
+        ra_dec[:, 0] = ra
+        ra_dec[:, 1] = dec
+
     simulator = VisCPU(
         uvdata = uvdata,
         beams = beam,
