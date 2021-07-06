@@ -84,9 +84,7 @@ def run(config, which_param):
         raise RuntimeError("Can't find script "+config["script"])
 
     print("Pre-run")		# Get the script loaded into cache by running a few times
-    get_time(config["pinterp"], config["script"], config["defaults"]["antennas"],
-	config["defaults"]["channels"], config["defaults"]["times"], config["defaults"]["sources"],
-        config["option"], config["show_output"])
+    get_time(config["pinterp"], config["script"], 10, 10, 10, 10, config["option"], config["show_output"])
     print("End pre-run")
 
     for param in [ which_param ]:
