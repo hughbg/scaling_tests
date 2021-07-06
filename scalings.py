@@ -97,10 +97,10 @@ def run(config, which_param):
         for i, num in enumerate(param_values):
             script_time[i], sim_time[i], mem_used[i] = get_time(config["pinterp"], 
                                               config["script"], 
-                                              num if param=="antennas" else config["defaults"][param], 
-                                              num if param=="channels" else config["defaults"][param],
-                                              num if param=="times" else config["defaults"][param],
-                                              num if param=="sources" else config["defaults"][param],
+                                              num if param=="antennas" else config["defaults"]["antennas"],
+                                              num if param=="channels" else config["defaults"]["channels"],
+                                              num if param=="times" else config["defaults"]["times"],
+                                              num if param=="sources" else config["defaults"]["sources"]
                                               config["option"], config["show_output"])
 
             xaxis_values = param_values
