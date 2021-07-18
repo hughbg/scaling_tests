@@ -3,7 +3,7 @@ import os
 import numpy as np
 import yaml
 
-PYUVSIM = False
+PYUVSIM = True
 
 def find_files(run_type, sim_titles):
     files = []
@@ -56,9 +56,14 @@ for run_type in [ "Baselines_Script_Time", "Baselines_Memory_usage", "Baselines_
     for sim in sorted(run_type_data.keys()):
         x = run_type_data[sim][:, 0]
         y = run_type_data[sim][:, 1]
+        x = x[y>0]
+        y = y[y>0]
         _max = max(_max, np.max(y))
         y = np.where(y<=0 , np.nan, y)
-        plt.plot(x, y, label=sim, linewidth=0.6, color=colors[color_index])
+        if len(x) == 1:
+            plt.scatter(x, y, label=sim, s=8, color=colors[color_index])
+        else: 
+            plt.plot(x, y, label=sim, linewidth=0.6, color=colors[color_index])
         labs = labels(run_type)
         plt.xlabel(labs[0])
         plt.ylabel(labs[1])

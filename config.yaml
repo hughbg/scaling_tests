@@ -1,27 +1,33 @@
 pinterp: /users/hgarsden/anaconda3_herasim/bin/python
 run_as_batch: True
+mem: 232                # GB
+repetitions: 4
+run_time: "48:00:00"
+gpu_run_time: "18:00:00"
+show_output: False
+
 
 defaults:
-  antennas: 10
-  channels: 10
-  sources: 10
-  times: 10
+  antennas: 30
+  channels: 100
+  sources: 1000
+  times: 100
 
 antennas:
     max: 350
-    step: 10
+    step: 50
 
 channels:
-    max: 2000
-    step: 50
+    max: 1000
+    step: 100
     
 sources:
     max: 10000
-    step: 200
+    step: 1000
 
 times:
-    max: 2000
-    step: 50
+    max: 1000
+    step: 100
 
 hera_sim_cpu_az:
         script: hera_sim_sim.py        
@@ -50,6 +56,7 @@ hera_sim_gpu:
 pyuvsim:
         script: pyuvsim_sim.py
         title: pyuvsim
+        nproc: 32
 
 healvis:
         script: healvis_sim.py
@@ -61,8 +68,3 @@ short_run:
         gpu_run_time: "1:00:00"
         mem: 1          # GB
 
-mem: 232                # GB
-repetitions: 4
-run_time: "24:00:00"
-gpu_run_time: "5:00:00"
-show_output: False

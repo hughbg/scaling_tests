@@ -14,11 +14,13 @@ def short(config):
     config["repetitions"] = 1
     return config
 
-def get_time(pinterp, script, nant, nchan, ntime, nsource, option, show_output):
+def get_time(pinterp, script, nant, nchan, ntime, nsource, option, nproc, show_output):
     command = [pinterp, script, '--nant', str(nant), '--nchan', str(nchan), '--ntime', str(ntime), '--nsource', str(nsource) ]
 
     if option is not None:
         command += [ "--"+option ]
+    if nproc > 1: 
+        command = [ "mpiexec", "-n", str(nproc) ] + command 
     
     print(" ".join(command))
     sys.stdout.flush()
@@ -83,8 +85,12 @@ def run(config, which_param):
     if not os.path.exists(config["script"]):
         raise RuntimeError("Can't find script "+config["script"])
 
+    nproc = 1
+    if "nproc" in config[sys.argv[1]]:
+        nproc = config[sys.argv[1]]["nproc"]
+
     print("Pre-run")		# Get the script loaded into cache by running a few times
-    get_time(config["pinterp"], config["script"], 10, 10, 10, 10, config["option"], config["show_output"])
+    get_time(config["pinterp"], config["script"], 10, 10, 10, 10, config["option"], 1, config["show_output"])
     print("End pre-run")
 
     for param in [ which_param ]:
@@ -100,8 +106,8 @@ def run(config, which_param):
                                               num if param=="antennas" else config["defaults"]["antennas"],
                                               num if param=="channels" else config["defaults"]["channels"],
                                               num if param=="times" else config["defaults"]["times"],
-                                              num if param=="sources" else config["defaults"]["sources"]
-                                              config["option"], config["show_output"])
+                                              num if param=="sources" else config["defaults"]["sources"],
+                                              config["option"], nproc, config["show_output"])
 
             xaxis_values = param_values
             xlabel = param.capitalize()

@@ -29,18 +29,32 @@ def telescope_config(which_package, nant=2, nfreq=2, ntime=1, nsource=1, simple_
         ants[i] = ( x[i], y[i], z[i] )
         
     # Observing parameters in a UVData object.
-    uvdata = io.empty_uvdata(
-        Nfreqs = nfreq,             # Need 2 freqs for healvis to work
-        start_freq = 100e6,
-        channel_width = 97.3,
-        start_time = 2458902.4,
-        integration_time = 40.0,
-        Ntimes = ntime,
-        array_layout = ants,
-        polarization_array = np.array([ "XX", "YY", "XY", "YX" ]),
-        Npols = 4
-    )
-    
+    try:
+        uvdata = io.empty_uvdata(
+            Nfreqs = nfreq,             # Need 2 freqs for healvis to work
+            start_freq = 100e6,
+            channel_width = 97.3,
+            start_time = 2458902.4,
+            integration_time = 40.0,
+            Ntimes = ntime,
+            array_layout = ants,
+            polarization_array = np.array([ "XX", "YY", "XY", "YX" ]),
+            Npols = 4
+        )
+    except:               # old format
+        uvdata = io.empty_uvdata(
+            nfreq = nfreq,             # Need 2 freqs for healvis to work
+            start_freq = 100e6,
+            channel_width = 97.3,
+            start_time = 2458902.4,
+            integration_time = 40.0,
+            ntimes = ntime,
+            ants = ants,
+            polarization_array = np.array([ "XX", "YY", "XY", "YX" ]),
+            Npols = 4
+        )
+        
+
     # Random sources.
     sources = [
         [ 125.7, -30.72, 2, 0 ],     # Source near zenith, which is at 130.7   -30.72
