@@ -90,7 +90,7 @@ def telescope_config(which_package, nant=2, nfreq=2, ntime=1, nsource=1, simple_
                                    0.00151808, -0.00593812, 0.00351559
                                  ] )
 
-        beam = [PerturbedPolyBeam(np.array([-0.20437532, -0.4864951,  -0.18577532, -0.38053642,  0.08897764,  0.06367166,
+        beam = [PerturbedPolyBeam(perturb_coeffs=np.array([-0.20437532, -0.4864951,  -0.18577532, -0.38053642,  0.08897764,  0.06367166,
                               0.29634711,  1.40277112]),
                               mainlobe_scale=1.0, xstretch=0.9, ystretch=0.8, **cfg_beam) 
                 for i in range(len(ants.keys()))]
