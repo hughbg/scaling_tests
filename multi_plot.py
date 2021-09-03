@@ -5,6 +5,9 @@ import yaml
 
 PYUVSIM = True
 
+with open("config.yaml") as yfile:
+    config = yaml.load(yfile, Loader=yaml.FullLoader)
+
 def find_files(run_type, sim_titles):
     files = []
     for sim in sim_titles:
@@ -13,6 +16,7 @@ def find_files(run_type, sim_titles):
             if PYUVSIM or "pyuvsim" not in fname: files.append(fname)
         else:
             print(fname, "missing")
+
     return files
 
 def load_files_data(run_type, sim_titles):
@@ -37,11 +41,10 @@ def labels(run_type):
     return x_label, y_label
 
 titles = []
-with open("config.yaml") as yfile:
-    config = yaml.load(yfile, Loader=yaml.FullLoader)
+
 
 for sim in config.keys():
-    if  isinstance(config[sim], dict) and "title" in config[sim]:
+    if sim in config["run_these"]:
         titles += [ config[sim]["title"].replace(" ", "_") ]
     
 colors = [ '#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000' ]
@@ -51,6 +54,7 @@ for run_type in [ "Baselines_Script_Time", "Baselines_Memory_usage", "Baselines_
                 "Sources_Memory_usage", "Sources_Script_Time", "Sources_Simulation_Time",
                 "Times_Memory_usage", "Times_Script_Time", "Times_Simulation_Time" ]:
     run_type_data = load_files_data(run_type, titles)
+
     _max = 0
     color_index = 0
     for sim in sorted(run_type_data.keys()):

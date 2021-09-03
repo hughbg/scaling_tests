@@ -71,7 +71,8 @@ else:
         point_source_flux = flux,
         bm_pix = BEAM_PIX,
         use_gpu = args.use_gpu,
-        use_pixel_beams = True if args.use_gpu else args.use_beam_pix
+        use_pixel_beams = True if args.use_gpu else args.use_beam_pix,
+        polarized=True
     )
 
 simulator.simulate()

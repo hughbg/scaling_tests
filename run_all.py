@@ -76,11 +76,5 @@ def run_scaling(which, param, use_gpu=False):
 if os.path.exists("group_"+str(os.getpid())+".txt"):
     os.remove("group_"+str(os.getpid())+".txt")
 for p in [ "antennas", "channels", "times", "sources" ]:
-    #run_scaling("hera_sim_cpu_az", p)
-    #run_scaling("hera_sim_cpu_az_update", p)          
-    #run_scaling("hera_sim_cpu_astropy", p)
-    #run_scaling("hera_sim_cpu_beam_pix", p)
-    #run_scaling("hera_sim_gpu", p, True)
-    #run_scaling("healvis", p)
-    run_scaling("pyuvsim", p)
-
+    for sim in config["run_these"]:
+        run_scaling(sim, p)     # Problem hera_gpu need True arg

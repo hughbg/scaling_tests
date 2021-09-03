@@ -5,29 +5,42 @@ repetitions: 4
 run_time: "48:00:00"
 gpu_run_time: "18:00:00"
 show_output: False
+short_run:
+        enable: False
+        run_time: "1:00:00"
+        gpu_run_time: "1:00:00"
+        mem: 1          # GB
 
+#run_these: [ "hera_sim_cpu_az", "hera_sim_cpu_astropy", "hera_sim_cpu_az_update", "hera_sim_cpu_beam_pix", "hera_sim_gpu", "pyuvsim", "healvis" ]
+
+run_these: [ "hera_sim_cpu_az_update" ]
+
+# Parameter definitions
 
 defaults:
-  antennas: 30
-  channels: 100
-  sources: 1000
-  times: 100
+  antennas: 5
+  channels: 20
+  sources: 20
+  times: 20
 
 antennas:
     max: 350
-    step: 50
+    step: 25
 
 channels:
     max: 1000
-    step: 100
+    step: 50
     
 sources:
     max: 10000
-    step: 1000
+    step: 500
 
 times:
     max: 1000
-    step: 100
+    step:  50
+
+
+# Simulation definitions
 
 hera_sim_cpu_az:
         script: hera_sim_sim.py        
@@ -61,10 +74,4 @@ pyuvsim:
 healvis:
         script: healvis_sim.py
         title: healvis
-
-short_run: 
-        enable: False 
-        run_time: "1:00:00"
-        gpu_run_time: "1:00:00"
-        mem: 1          # GB
 
